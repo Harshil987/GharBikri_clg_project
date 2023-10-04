@@ -1,0 +1,56 @@
+// Define your Prisma schema in a file named `schema.prisma`
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mongodb"
+    url      = env("DATABASE_URL")
+}
+
+// Define the data model for the `users` table
+model User {
+    id           String     @id @default(auto()) @map("_id") @db.ObjectId// Assuming UUIDs are used
+    first_name     String
+    last_name      String?
+    user_email     String     @unique
+    password       String
+    created_at     DateTime   @default(now())
+    updated_at     DateTime   @default(now())
+    phone_number   String
+    address_city   String
+    address_state  String
+    property_count Int
+    properties     Property[]
+}
+
+model Property {
+    p_id                  String   @id @default(auto()) @map("_id") @db.ObjectId// Assuming UUIDs are used
+    p_name                String
+    p_address_street_num  Int
+    p_address_street_name String?
+    p_address_city        String
+    p_address_state       String
+    user_id               String    @db.ObjectId
+    p_description         String
+    p_type                String
+    p_bed                 Int
+    p_bath                Int
+    p_area_sq_ft          Int
+    p_repair_quality      String
+    p_year                Int
+    p_price               Float
+    p_listingType         String
+    p_availability_status Boolean
+    p_frontal_image       String
+    created_at            DateTime @default(now())
+    updated_at            DateTime @default(now())
+    p_views               Int      @default(0)
+    user                  User     @relation(fields: [user_id], references: [id])
+}
+
+// Define the Trigger function to update user property count
+
+    
+// This trigger is not part of the Prisma schema, as Prisma does not support triggers.
+// You would need to implement this logic in your application code when inserting/deleting properties.

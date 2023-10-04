@@ -9,32 +9,16 @@ const HeroCard = () => {
     const [data, setData] = useState({
         location: "",
         propertyType: "House",
-        listingType: "Rent",
+        listingType: "Buy",
         minPrice: "",
         maxPrice: "",
     });
 
-    const [searchData, setSearchData] = useState([]);
-
-    const searchProperty = async () => {
-        try {
-            const response = await axios.get(`${SERVER_URL}/api/properties/search}`,
-                { params: data }
-            );
-            setSearchData(response.data);
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    // console.log(searchData);
-
-    // console.log(data);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setData((prevData) => ({ ...prevData, [name]: value }));
-    };
+        setData({ ...data, [name]: value });
+      };
 
     return (
         <div className="">
@@ -95,6 +79,7 @@ const HeroCard = () => {
                                         placeholder="Enter Min Price"
                                         className="w-full border-none text-gray-500 bg-white rounded-lg p-2  placeholder:text-gray-400 text-lg font-medium py focus:outline-none"
                                         onChange={handleChange}
+                                        value={data.minPrice}
                                         id="minPrice"
                                         name="minPrice"
                                     />
@@ -112,6 +97,7 @@ const HeroCard = () => {
                                         placeholder="Enter max Price"
                                         className="w-full border-none text-gray-500 bg-white rounded-lg p-2  placeholder:text-gray-400 text-lg font-medium py focus:outline-none"
                                         onChange={handleChange}
+                                        value={data.maxPrice}
                                         id="maxPrice"
                                         name="maxPrice"
                                     />
@@ -123,9 +109,9 @@ const HeroCard = () => {
 
                     <div className="md:absolute md:right-[5%] flex items-center justify-center -translate-y-1/2">
                         <Link
-                            to={`/search?location=${data.location}&propertyType=${data.propertyType}`}
+                             to={`/search?minprice=${data.minPrice}&maxprice=${data.maxPrice}&city=${data.location}&type=${data.propertyType}`}
                             state={data}
-                            onClick={searchProperty}
+                            // onClick={searchProperty}
                         >
                             <button className="bg-cyan-600 px-10 py-4 text-white text-xl font-bold rounded-lg hover:bg-cyan-700">
                                 Search

@@ -57,10 +57,11 @@ function Nav({ setAuth, isAuthenticated }) {
 
         if (Object.keys(error).length === 0) {
             try {
+                
                 const body = { user_email, password };
                 const response = await axios.post(`${SERVER_URL}/api/auth/login`, body);
                 const parseRes = response.data;
-
+                
                 if (parseRes.token) {
                     localStorage.setItem("token", parseRes.token); // localStorage is a browser API that stores data with no expiration
                     setAuth(true);
@@ -68,7 +69,7 @@ function Nav({ setAuth, isAuthenticated }) {
                     toastSuccess("Logged in successfully!");
                     setTimeout(() => {
                         refreshPage();
-                    }, 2000);
+                    }, 1000);
                     loadUser();
                     // console.log("Logged in successfully!");
                     // close the modal
@@ -105,7 +106,7 @@ function Nav({ setAuth, isAuthenticated }) {
         toastSuccess("Logged out Successfully");
         setTimeout(() => {
             refreshPage();
-        }, 2000);
+        }, 1000);
     };
 
     const [user, setUser] = useState({
@@ -210,7 +211,7 @@ function Nav({ setAuth, isAuthenticated }) {
                     setShowRegisterModal(false);
                     setTimeout(() => {
                         refreshPage();
-                    }, 2000);
+                    }, 1000);
                 } else {
                     setAuth(false);
                 }

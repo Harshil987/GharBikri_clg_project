@@ -96,7 +96,7 @@ const EditUser = () => {
             toastSuccess("Profile updated successfully!");
             setTimeout(() => {
                 window.location = "/profile";
-            }, 2000);
+            }, 1000);
 
         } catch (err) {
             toastError(err.response.data);
@@ -120,7 +120,7 @@ const EditUser = () => {
             toastSuccess("Password updated successfully!");
             setTimeout(() => {
                 window.location = "/profile";
-            }, 2000);
+            }, 1000);
         } catch (err) {
             // console.error(err.response.data.message);
             toastError(err.response.data.message);

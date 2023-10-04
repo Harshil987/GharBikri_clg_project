@@ -10,6 +10,7 @@ import { useParams } from "react-router-dom";
 export default function PageDetails() {
 
     const { id } = useParams();
+    
 
     const [properties, setProperties] = useState({
         p_name: "",
@@ -38,13 +39,7 @@ export default function PageDetails() {
         owner_phone_number: ""
     });
 
-    const fetchProperty = async () => {
-        const result = await axios.get(`${SERVER_URL}/api/dashboard/property/${id}`, {
-            headers: { token: localStorage.token }
-        });
-        setProperties(result.data);
-        // console.log(result.data);
-    };
+    
 
 
     const shouldFetch = useRef(true); // to prevent infinite loop
@@ -52,7 +47,15 @@ export default function PageDetails() {
         if (!shouldFetch.current) {
             shouldFetch.current = false; // set it to true first time component renders
         }
+        const fetchProperty = async () => {
+            const result = await axios.get(`${SERVER_URL}/api/dashboard/property/${id}`, {
+                headers: { token: localStorage.token }
+            });
+            setProperties(result.data);
+            setUserId(result.data.user_id);
+        };
         fetchProperty();
+        
     }, []);
 
     // destructuring properties
@@ -93,10 +96,10 @@ export default function PageDetails() {
         document.title = `${p_name} Details`;
     }, [properties]);
 
-    const [user, setUser] = useState({
-        user_id: "",
-    });
-
+    const [User, setUser] = useState("");
+    const [UserId, setUserId] = useState("");
+    
+    
     useEffect(() => {
         loadUser();
     }, []);
@@ -105,16 +108,21 @@ export default function PageDetails() {
         const result = await axios.get(`${SERVER_URL}/api/dashboard`, {
             headers: { token: localStorage.token }
         });
-        setUser(result.data);
+        setUser(result.data.id);
+        // console.log(result.data.user.id);
+
+        
     };
 
     const deleteProperty = async () => {
         try {
-            await axios.delete(`${SERVER_URL}/api/dashboard/property/${properties.p_id}`, {
+            await axios.delete(`${SERVER_URL}/api/dashboard/property/${id}`, {
                 headers: { token: localStorage.token }
             });
             // refresh page
-            window.location.reload();
+            setTimeout(() => {
+                window.location = "/dashboard";
+            }, 1000);
         } catch (error) {
             console.log(error);
         }
@@ -186,7 +194,7 @@ export default function PageDetails() {
                 <div className="mt-6 flex flex-col sm:flex-row sm:gap-5">
                     {/* edit button if user is the owner */}
                     {
-                        user.user_id === owner_id && (
+                        User === UserId && (
                             <div className="mt-6 flex flex-col sm:flex-row sm:gap-5">
                                 {/* edit user button  */}
                                 <div className="py-3 bg-gray-50 text-left">

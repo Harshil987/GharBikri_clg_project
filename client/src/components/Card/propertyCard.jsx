@@ -28,7 +28,7 @@ const propertyCard = ({ property }) => {
                     <div className="flex justify-start">
                         <span className="text-cyan-600 lg:text-3xl font-bold text-2xl">${property.p_price}</span>
                         {/* if property.listingType is rent then display per month  */}
-                        {property.p_listingtype === "Rent" ?
+                        {property.p_listingType === "Rent" ?
                             <span className="text-gray-500 text-lg font-semibold">&nbsp;/month</span> : null
                         }
                     </div>

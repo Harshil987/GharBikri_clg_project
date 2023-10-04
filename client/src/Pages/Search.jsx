@@ -3,6 +3,7 @@ import axios from "axios";
 import PropertyCard from "../components/Card/propertyCard";
 import { SERVER_URL } from "../Config";
 import MiniNav from "../components/MiniNav/MiniNav";
+import { useLocation } from "react-router-dom";
 
 export default function Buy() {
   useEffect(() => {
@@ -11,55 +12,42 @@ export default function Buy() {
       "Real Estate for Sale | Buy Property | Property Rent or Buy";
   }, []);
 
-  const [user, setUser] = useState({
-    user_id: "",
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const minPrice = searchParams.get("minprice");
+  const maxPrice = searchParams.get("maxprice");
+  const city = searchParams.get("city");
+  const propertyType = searchParams.get("type");
+  const [searchData, setSearchData] = useState([]);
+
+  const [data, setData] = useState({
+    city: city || "", // Set to the value from searchParams or an empty string if not found
+    Type: propertyType || "House", // Set to the value from searchParams or "House" if not found
+    listingType: "Buy",
+    minPrice: minPrice || "", // Set to the value from searchParams or an empty string if not found
+    maxPrice: maxPrice || "", // Set to the value from searchParams or an empty string if not found
   });
 
-  useEffect(() => {
-    loadUser();
-  }, []);
-
-  const loadUser = async () => {
+  const searchProperty = async () => {
     try {
-      const result = await axios.get(`${SERVER_URL}/api/dashboard`, {
-        headers: { token: localStorage.token },
-      });
-
-      // Check if user_id exists in the response data
-      const { data } = result; // Destructure the data property
-
-      // Check if user_id exists in the response data
-      if (data && data.id) {
-        setUser({ user_id: data.id });
-        // Log the user data
-      } else {
-        console.error("User data or user_id not found in response.");
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const [buyProperties, setBuyProperties] = useState([]);
-
-  const getBuyProperties = async () => {
-    try {
-      const user_id = user.user_id;
-      const res = await axios.get(
-        `${SERVER_URL}/api/properties/home?user_id=${user_id}&listingtype=Buy`
+      const response = await axios.get(
+        `${SERVER_URL}/api/properties/buy/search`,
+        { params: data }
       );
-      setBuyProperties(res.data.property);
-      console.log(res.data.property);
+      setSearchData(response.data.property);
+      // console.log(response);
+      // console.log(data)
+      // console.log(searchData);
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   };
 
+  console.log(searchData);
+
   useEffect(() => {
-    if (user.user_id !== "") {
-      getBuyProperties();
-    }
-  }, [user]);
+    searchProperty();
+  }, []);
 
   return (
     <>
@@ -71,9 +59,9 @@ export default function Buy() {
         <main className="w-full flex lg:mt-10">
           <div className="flex-1 flex items-center justify-center">
             <div className="w-full p-6 max-w-full space-y-8 bg-white text-gray-600 sm:p-0">
-              {buyProperties && buyProperties.length > 0 ? (
+              {searchData && searchData.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-16 lg:mx-0 mx-8">
-                  {buyProperties.map((property) => (
+                  {searchData.map((property) => (
                     <PropertyCard key={property.p_id} property={property} />
                   ))}
                 </div>

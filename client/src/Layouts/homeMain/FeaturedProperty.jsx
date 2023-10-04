@@ -1,11 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect,  useState } from "react";
 import axios from "axios";
 import PropertyCard from "../../components/Card/propertyCard";
 import { Link } from "react-router-dom";
 import { SERVER_URL } from "../../Config";
-
 export default function FeaturedProperty() {
-
     const [user, setUser] = useState({
         user_id: "",
     });
@@ -15,46 +13,56 @@ export default function FeaturedProperty() {
     }, []);
 
     const loadUser = async () => {
-        const result = await axios.get(`${SERVER_URL}/api/dashboard`, {
-            headers: { token: localStorage.token }
-        });
-        setUser(result.data);
-    };
+        try {
+            const result = await axios.get(`${SERVER_URL}/api/dashboard`, {
+                headers: { token: localStorage.token }
+            });
 
+            // Check if user_id exists in the response data
+            const { data } = result; // Destructure the data property
+
+            // Check if user_id exists in the response data
+            if (data && data.id) {
+                setUser({ user_id: data.id });
+                 // Log the user data
+            } else {
+                console.error('User data or user_id not found in response.');
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     const [rentProperties, setRentProperties] = useState([]);
-
     const [buyProperties, setBuyProperties] = useState([]);
 
     const getRentProperties = async () => {
         try {
-            // send user parameter to backend to exclude properties posted by current logged in user if any user is logged in
-            let user_id = user.user_id;
+            const user_id = user.user_id;
             const res = await axios.get(`${SERVER_URL}/api/properties/home?user_id=${user_id}&listingtype=Rent`);
             setRentProperties(res.data.property);
+            console.log(res.data.property)
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 
     const getBuyProperties = async () => {
         try {
-            // send user parameter to backend to exclude properties posted by current logged in user if any user is logged in
-            let user_id = user.user_id;
+            const user_id = user.user_id;
             const res = await axios.get(`${SERVER_URL}/api/properties/home?user_id=${user_id}&listingtype=Buy`);
             setBuyProperties(res.data.property);
+            console.log(res.data.property)
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 
-    const shouldFetch = useRef(true); // to prevent infinite loop
     useEffect(() => {
-        if (!shouldFetch.current) {
-            shouldFetch.current = false; // set it to true first time component renders
+        if (user.user_id !== "") {
+            getRentProperties();
+            getBuyProperties();
         }
-        getRentProperties();
-        getBuyProperties();
     }, [user]);
 
     return (

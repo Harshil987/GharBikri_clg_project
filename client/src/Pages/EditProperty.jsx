@@ -79,10 +79,19 @@ export default function Edit() {
         updated_at
     } = properties;
 
+   
     const onChange = (e) => {
+        let newValue = e.target.value;
+    
+        // Check if the input element has type="number"
+        if (e.target.type === 'number') {
+            // Use parseInt to convert the value to an integer
+            newValue = parseInt(e.target.value, 10); // Base 10
+        }
+    
         setProperties({
             ...properties,
-            [e.target.name]: e.target.value
+            [e.target.name]: newValue
         });
     };
 
@@ -215,7 +224,7 @@ export default function Edit() {
                     // wait for 2 seconds and then redirect to dashboard
                     setTimeout(() => {
                         window.location = "/dashboard";
-                    }, 2000);
+                    }, 1000);
                 }
                 else {
                     toastError("Property not updated");
