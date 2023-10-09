@@ -19,6 +19,7 @@ export default function Buy() {
   const city = searchParams.get("city");
   const propertyType = searchParams.get("type");
   const [searchData, setSearchData] = useState([]);
+  const [IsLoading, setIsLoading] = useState(true);
 
   const [data, setData] = useState({
     city: city || "", // Set to the value from searchParams or an empty string if not found
@@ -35,15 +36,17 @@ export default function Buy() {
         { params: data }
       );
       setSearchData(response.data.property);
+      setIsLoading(false)
       // console.log(response);
       // console.log(data)
       // console.log(searchData);
     } catch (error) {
       console.log(error);
+      setIsLoading(false)
     }
   };
 
-  console.log(searchData);
+  
 
   useEffect(() => {
     searchProperty();
@@ -56,6 +59,12 @@ export default function Buy() {
         <h1 className="text-3xl font-semibold text-center lg:text-left my-8 lg:text-5xl">
           Sale Listings
         </h1>
+        {IsLoading ? (
+               
+                <div className="flex justify-center items-center h-screen">
+                    <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-cyan-500"></div>
+                </div>
+            ) : (
         <main className="w-full flex lg:mt-10">
           <div className="flex-1 flex items-center justify-center">
             <div className="w-full p-6 max-w-full space-y-8 bg-white text-gray-600 sm:p-0">
@@ -73,6 +82,8 @@ export default function Buy() {
             </div>
           </div>
         </main>
+            )
+              }
       </div>
     </>
   );

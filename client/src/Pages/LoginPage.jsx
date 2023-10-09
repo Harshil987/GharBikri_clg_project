@@ -49,11 +49,15 @@ function LoginPage({ setAuth }) {
                 const response = await axios.post(`${SERVER_URL}/api/auth/login`, body);
                 const parseRes = response.data;
 
-                if (parseRes.token) {
+                if (parseRes.token && parseRes.user_id) {
+                    console.log(parseRes);
                     localStorage.setItem("token", parseRes.token); // localStorage is a browser API that stores data with no expiration
+                    localStorage.setItem("user_id", parseRes.user_id);
+                    
                     setAuth(true);
                     toastSuccess("Logged in successfully!");
-                    // console.log("Logged in successfully!");
+                     
+                     
                 } else {
                     setAuth(false);
                 }

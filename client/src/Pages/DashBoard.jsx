@@ -7,34 +7,9 @@ import { SERVER_URL } from "../Config/index.js";
 import MiniNav from "../components/MiniNav/MiniNav";
 
 function Dashboard() {
-  const [user, setUser] = useState({
-    first_name: "",
-    last_name: "",
-    user_email: "",
-    phone_number: "",
-    address_city: "",
-    address_state: "",
-    created_at: "",
-    updated_at: "",
-    property_count: "",
-  });
-
-  useEffect(() => {
-    loadUser();
-  }, []);
-
-  user.created_at = new Date(user.created_at).toLocaleDateString();
-  user.updated_at = new Date(user.updated_at).toLocaleDateString();
-
-  // load user who is logged in
-  const loadUser = async () => {
-    const result = await axios.get("http://localhost:3000/api/dashboard", {
-      headers: { token: localStorage.token },
-    });
-    setUser(result.data);
-  };
-
+ 
   const [properties, setProperties] = useState([]);
+  const [IsLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     loadProperties();
@@ -50,6 +25,7 @@ function Dashboard() {
     );
     // console.log(result.data);
     setProperties(result.data);
+    setIsLoading(false)
   };
 
   // const [rentProperties, setRentProperties] = useState([]);
@@ -61,6 +37,12 @@ function Dashboard() {
         <h1 className="text-3xl font-semibold text-center lg:text-left my-8 lg:text-5xl">
           Properties Listed
         </h1>
+        {IsLoading ? (
+            // Display a loader while data is loading
+            <div className="flex justify-center items-center h-screen">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-cyan-500"></div>
+        </div>
+        ) :(
         <div className="lg:p-20 lg:rounded-3xl bg-gray-100 py-16">
           {properties ? (
             <>
@@ -76,6 +58,7 @@ function Dashboard() {
             </div>
           )}
         </div>
+        )}
       </main>
     </>
   );

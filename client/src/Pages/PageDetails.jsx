@@ -7,113 +7,105 @@ import { MdDeleteForever } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 
-export default function PageDetails() {
+    export default function PageDetails() {
 
-    const { id } = useParams();
-    
-
-    const [properties, setProperties] = useState({
-        p_name: "",
-        p_address_street_num: "",
-        p_address_street_name: "",
-        p_address_city: "",
-        p_address_state: "",
-        p_description: "",
-        p_type: "",
-        p_bed: "",
-        p_bath: "",
-        user_id: "",
-        p_area_sq_ft: "",
-        p_repair_quality: "",
-        p_year: "",
-        p_price: "",
-        p_listingType: "",
-        p_availability_status: "",
-        p_frontal_image: "",
-        created_at: "",
-        updated_at: "",
-        p_views: "",
-        owner_first_name: "",
-        owner_last_name: "",
-        owner_email: "",
-        owner_phone_number: ""
-    });
-
-    
-
-
-    const shouldFetch = useRef(true); // to prevent infinite loop
-    useEffect(() => {
-        if (!shouldFetch.current) {
-            shouldFetch.current = false; // set it to true first time component renders
-        }
-        const fetchProperty = async () => {
-            const result = await axios.get(`${SERVER_URL}/api/dashboard/property/${id}`, {
-                headers: { token: localStorage.token }
-            });
-            setProperties(result.data);
-            setUserId(result.data.user_id);
-        };
-        fetchProperty();
+        const { id } = useParams();
+        const [loading, setLoading] = useState(true);
         
-    }, []);
 
-    // destructuring properties
-    let {
-        p_name,
-        p_address_street_num,
-        p_address_street_name,
-        p_address_city,
-        p_address_state,
-        p_description,
-        p_type,
-        p_bed,
-        p_bath,
-        p_area_sq_ft,
-        p_repair_quality,
-        p_year,
-        p_price,
-        p_listingType,
-        p_availability_status,
-        p_frontal_image,
-        created_at,
-        updated_at,
-        p_views,
-        owner_id,
-        owner_first_name,
-        owner_last_name,
-        owner_email,
-        owner_phone_number
-    } = properties;
-
-    created_at = new Date(created_at).toLocaleDateString();
-    updated_at = new Date(updated_at).toLocaleDateString();
-
-    useEffect(() => {
-        if (!shouldFetch.current) {
-            shouldFetch.current = false; // set it to true first time component renders
-        }
-        document.title = `${p_name} Details`;
-    }, [properties]);
-
-    const [User, setUser] = useState("");
-    const [UserId, setUserId] = useState("");
-    
-    
-    useEffect(() => {
-        loadUser();
-    }, []);
-
-    const loadUser = async () => {
-        const result = await axios.get(`${SERVER_URL}/api/dashboard`, {
-            headers: { token: localStorage.token }
+        const [properties, setProperties] = useState({
+            p_name: "",
+            p_address_street_num: "",
+            p_address_street_name: "",
+            p_address_city: "",
+            p_address_state: "",
+            p_description: "",
+            p_type: "",
+            p_bed: "",
+            p_bath: "",
+            user_id: "",
+            p_area_sq_ft: "",
+            p_repair_quality: "",
+            p_year: "",
+            p_price: "",
+            p_listingType: "",
+            p_availability_status: "",
+            p_frontal_image: "",
+            created_at: "",
+            updated_at: "",
+            p_views: "",
+            owner_first_name: "",
+            owner_last_name: "",
+            owner_email: "",
+            owner_phone_number: ""
         });
-        setUser(result.data.id);
-        // console.log(result.data.user.id);
 
         
-    };
 
+
+        const shouldFetch = useRef(true); // to prevent infinite loop
+        useEffect(() => {
+            if (!shouldFetch.current) {
+                shouldFetch.current = false; // set it to true first time component renders
+            }
+            const fetchProperty = async () => {
+                const result = await axios.get(`${SERVER_URL}/api/dashboard/property/${id}`, {
+                    headers: { token: localStorage.token }
+                });
+                setProperties(result.data);
+            
+                setUserId(result.data.user.id);
+                setLoading(false);
+            };
+            fetchProperty();
+            
+        }, []);
+
+        // destructuring properties
+        let {
+            p_name,
+            p_address_street_num,
+            p_address_street_name,
+            p_address_city,
+            p_address_state,
+            p_description,
+            p_type,
+            p_bed,
+            p_bath,
+            p_area_sq_ft,
+            p_repair_quality,
+            p_year,
+            p_price,
+            p_listingType,
+            p_availability_status,
+            p_frontal_image,
+            created_at,
+            updated_at,
+            p_views,
+            owner_id,
+            owner_first_name,
+            owner_last_name,
+            owner_email,
+            owner_phone_number
+        } = properties;
+
+        created_at = new Date(created_at).toLocaleDateString();
+        updated_at = new Date(updated_at).toLocaleDateString();
+
+        useEffect(() => {
+            if (!shouldFetch.current) {
+                shouldFetch.current = false; // set it to true first time component renders
+            }
+            document.title = `${p_name} Details`;
+        }, [properties]);
+
+        const [User, setUser] = useState(localStorage.getItem("user_id") || "");
+
+        const [UserId, setUserId] = useState("");
+    
+        
+    
+    
     const deleteProperty = async () => {
         try {
             await axios.delete(`${SERVER_URL}/api/dashboard/property/${id}`, {
@@ -122,7 +114,7 @@ export default function PageDetails() {
             // refresh page
             setTimeout(() => {
                 window.location = "/dashboard";
-            }, 1000);
+            }, 0);
         } catch (error) {
             console.log(error);
         }
@@ -132,7 +124,12 @@ export default function PageDetails() {
         <>
             <div className="max-w-[1280px] mx-auto lg:p-6 w-[90%]">
                 <MiniNav />
-                <h1 className="text-3xl font-semibold text-center lg:text-left my-8 lg:text-5xl">{p_name}</h1>
+                {loading ? (
+            // Display a loader while data is loading
+            <div className="flex justify-center items-center h-screen">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-cyan-500"></div>
+        </div>
+        ) : ( <div><h1 className="text-3xl font-semibold text-center lg:text-left my-8 lg:text-5xl">{p_name}</h1>
                 <p className="text-center lg:text-left text-gray-500 text-sm mb-8">Last updated on {updated_at}</p>
                 <div>
 
@@ -194,7 +191,7 @@ export default function PageDetails() {
                 <div className="mt-6 flex flex-col sm:flex-row sm:gap-5">
                     {/* edit button if user is the owner */}
                     {
-                        User === UserId && (
+                        User == UserId && (
                             <div className="mt-6 flex flex-col sm:flex-row sm:gap-5">
                                 {/* edit user button  */}
                                 <div className="py-3 bg-gray-50 text-left">
@@ -224,7 +221,8 @@ export default function PageDetails() {
                                 </div>
                             </div>
                         )}
-                </div>
+                </div></div>
+                )}
             </div>
 
 

@@ -14,7 +14,7 @@ import Buy from "../Pages/Buy";
 import Sell from "../Pages/Sell";
 import Error404 from "../Pages/Error404";
 import PropertyDetails from "../Pages/PageDetails";
-import Favourites from "../Pages/Favourites";
+// import Favourites from "../Pages/Favourites";
 import Search from "../Pages/Search";
 
 function AppRoutes({ setAuth, isAuthenticated }) {
@@ -54,7 +54,7 @@ function AppRoutes({ setAuth, isAuthenticated }) {
 
       <Route path="/dashboard/editproperty/:id" element={<EditProperty />} />
 
-      <Route path="/favourites" element={<Favourites />} />
+      {/* <Route path="/favourites" element={<Favourites />} /> */}
     </Routes>
   );
 }

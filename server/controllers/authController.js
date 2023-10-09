@@ -88,8 +88,8 @@ exports.register = async (req, res) => {
 
         // Generate JWT token
         const token = jwtGenerator(newUser.id);
-        res.json({ token });
-        
+        const user_id = newUser.id;
+        res.json({ token, user_id});
 
     } catch (error) {
         console.error(error);
@@ -134,7 +134,9 @@ exports.login = async (req, res) => {
 
         // Generate and return the JWT token
         const token = jwtGenerator(user.id);
-        res.json({ token });
+        const user_id = user.id;
+
+        res.json({ token, user_id});
 
         // For cookie-based authentication
         // return res.status(200).cookie('token', token, { httpOnly: true }).json({

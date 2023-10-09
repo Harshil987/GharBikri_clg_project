@@ -22,6 +22,8 @@ export default function Profile() {
         property_count: ""
     });
 
+    const [IsLoading,setIsLoading] = useState(false);
+
     useEffect(() => {
         loadUser();
     }, []);
@@ -31,10 +33,12 @@ export default function Profile() {
 
     // load user who is logged in
     const loadUser = async () => {
+        setIsLoading(true);
         const result = await axios.get(`${SERVER_URL}/api/dashboard`, {
             headers: { token: localStorage.token }
         });
         setUser(result.data);
+        setIsLoading(false);
     };
 
     useEffect(() => {
@@ -52,6 +56,12 @@ export default function Profile() {
 
     return (
         <>
+            {IsLoading ? (
+                // Display a loader while data is loading
+                <div className="flex justify-center items-center h-screen">
+                <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-cyan-500"></div>
+            </div>
+            ) : (
             <div className="max-w-[1280px] mx-auto lg:p-6 w-[90%]">
                 <MiniNav />
                 <h1 className="text-3xl font-semibold text-center lg:text-left my-8 lg:text-5xl">{user.first_name}&apos;s Profile</h1>
@@ -124,7 +134,8 @@ export default function Profile() {
                 </div>
             </div>
 
-
+            )
+                        }                     
         </>
-    );
-}
+        );
+    }

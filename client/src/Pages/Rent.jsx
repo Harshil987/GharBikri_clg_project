@@ -10,48 +10,48 @@ export default function Rent() {
   }, []);
 
   const [user, setUser] = useState({
-    user_id: "",
+    user_id: localStorage.getItem("user_id") || "",
+    
   });
 
-  useEffect(() => {
-    loadUser();
-  }, []);
-
-  const loadUser = async () => {
-    const result = await axios.get(`${SERVER_URL}/api/dashboard`, {
-      headers: { token: localStorage.token },
-    });
-    setUser(result.data);
-  };
 
   const [rentProperties, setRentProperties] = useState([]);
+  const [IsLoading, setIsLoading] = useState(true);
 
   const getRentProperties = async () => {
     try {
-      // send user parameter to backend to exclude properties posted by current logged in user if any user is logged in
-      let user_id = user.user_id;
-      const res = await axios.get(`${SERVER_URL}/api/properties/rent`);
-      setRentProperties(res.data.property);
+      const user_id = user.user_id;
+      const res = await axios.get(`${SERVER_URL}/api/properties/rent?user_id=${user_id}`);
+      setRentProperties(res.data.properties);
+     
+      
     } catch (error) {
       console.log(error);
     }
+    finally{setIsLoading(false);}
   };
 
-  const shouldFetch = useRef(true); // to prevent infinite loop
+  // to prevent infinite loop
   useEffect(() => {
-    if (!shouldFetch.current) {
-      shouldFetch.current = false; // set it to true first time component renders
+    if (user.user_id !== "") {
+      getRentProperties();
     }
-    getRentProperties();
-  }, []);
+  }, [user]);
 
   return (
     <>
-      <div className="max-w-[1280px] mx-auto lg:p-6 w-[90%]">
+    <div className="max-w-[1280px] mx-auto lg:p-6 w-[90%]">
         <MiniNav />
         <h1 className="text-3xl font-semibold text-center lg:text-left my-8 lg:text-5xl">
           Rental Listings
         </h1>
+        {IsLoading ? (
+            // Display a loader while data is loading
+            <div className="flex justify-center items-center h-screen">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-cyan-500"></div>
+        </div>
+        ) : (
+      
         <main className="w-full flex lg:mt-10">
           <div className="flex-1 flex items-center justify-center">
             <div className="w-full p-6 max-w-full space-y-8 bg-white text-gray-600 sm:p-0">
@@ -69,7 +69,11 @@ export default function Rent() {
             </div>
           </div>
         </main>
+        )
+              }
       </div>
+       
+            
     </>
   );
 }

@@ -64,12 +64,13 @@ function Nav({ setAuth, isAuthenticated }) {
                 
                 if (parseRes.token) {
                     localStorage.setItem("token", parseRes.token); // localStorage is a browser API that stores data with no expiration
+                    localStorage.setItem("user_id", parseRes.user_id);
                     setAuth(true);
                     setShowModal(false);
                     toastSuccess("Logged in successfully!");
                     setTimeout(() => {
                         refreshPage();
-                    }, 1000);
+                    }, 0);
                     loadUser();
                     // console.log("Logged in successfully!");
                     // close the modal
@@ -103,10 +104,11 @@ function Nav({ setAuth, isAuthenticated }) {
         e.preventDefault();
         axios.get(`${SERVER_URL}/api/auth/logout`);
         await localStorage.removeItem("token");
+        await localStorage.removeItem("user_id");
         toastSuccess("Logged out Successfully");
         setTimeout(() => {
             refreshPage();
-        }, 1000);
+        }, 0);
     };
 
     const [user, setUser] = useState({
@@ -204,6 +206,7 @@ function Nav({ setAuth, isAuthenticated }) {
 
                 if (parseRes.token) {
                     localStorage.setItem("token", parseRes.token);
+                    localStorage.setItem("user_id", parseRes.user_id);
                     setAuth(true);
                     toastSuccess('Registered successfully!');
                     // console.log("Registered successfully!");
@@ -211,7 +214,7 @@ function Nav({ setAuth, isAuthenticated }) {
                     setShowRegisterModal(false);
                     setTimeout(() => {
                         refreshPage();
-                    }, 1000);
+                    }, 0);
                 } else {
                     setAuth(false);
                 }
@@ -670,9 +673,9 @@ function Nav({ setAuth, isAuthenticated }) {
                                         <li className="hover:underline flex flex-row">
                                             <a href="/dashboard"><FcHome />Dashboard</a>
                                         </li>
-                                        <li className="hover:underline">
+                                        {/* <li className="hover:underline">
                                             <a href="/favourites"><FcLike />Favourites</a>
-                                        </li>
+                                        </li> */}
                                         <li className="hover:underline flex flex-row">
                                             <Link to="/">
                                                 <FcUnlock />

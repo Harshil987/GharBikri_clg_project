@@ -205,7 +205,7 @@ export default function Sell() {
                     // wait for 2 seconds and then redirect to dashboard
                     setTimeout(() => {
                         window.location = "/dashboard";
-                    }, 1000);
+                    }, 0);
                 }
                 else {
                     toastError("Property not added");
